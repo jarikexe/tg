@@ -1,5 +1,6 @@
 import pkg from 'telegraf';
 import * as dotenv from 'dotenv';
+import * as http from 'http'
 import { CronJob } from 'cron';
 import { getRndInteger } from './utils.js';
 import { texts } from './texts.js'
@@ -75,4 +76,10 @@ bot.action('ko', (ctx) => {
    return ctx.reply(`Language was changed`, {reply_markup: Markup.keyboard(mainMenu('ko'))})
 });
 
+http.createServer((request, response) => {
+    response.statusCode = 200;
+    response.write('Hello World');
+    response.end();
+}).listen(8080);
 bot.launch();
+
