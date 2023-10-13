@@ -22,7 +22,10 @@ const addOrder = () => {
 }
 
 for(let i=0; i < getRndInteger(1,5); i++ ) {
-    addOrder();
+    for (i = 0; i< 7; i++) {
+        addOrder();
+    }
+
 }
 new CronJob(
     '0 0 0 * * *',
