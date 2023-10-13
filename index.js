@@ -13,7 +13,7 @@ let orders = [];
 const addOrder = () => {
     for (let i = 0; i < getRndInteger(1, 3); i++) {
         orders.push({
-            date: new Date().toLocaleString('en-US', { timeZone: 'Asia/Jakarta' }),
+            date: new Date().toDateString().toLocaleString('en-US', { timeZone: 'UTC+9:00' }),
             code: uuidv4().slice(0, 8).toUpperCase(),
             amount: getRndInteger(50, 300),
         });
@@ -22,7 +22,10 @@ const addOrder = () => {
 }
 
 for(let i=0; i < getRndInteger(1,5); i++ ) {
-    addOrder();
+    for (i = 0; i< 7; i++) {
+        addOrder();
+    }
+
 }
 new CronJob(
     '0 0 0 * * *',
