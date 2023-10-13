@@ -12,6 +12,7 @@
   "dependencies": {
     "cron": "^3.1.0",
     "dotenv": "^16.3.1",
-    "telegraf": "^3.38.0"
+    "telegraf": "^3.38.0",
+    "uuid": "^9.0.1"
   }
 }

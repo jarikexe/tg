@@ -1,51 +1,49 @@
 import pkg from 'telegraf';
 import * as dotenv from 'dotenv';
-import * as http from 'http'
+import * as http from 'http';
 import { CronJob } from 'cron';
 import { getRndInteger } from './utils.js';
-import { texts } from './texts.js'
+import { texts } from './texts.js';
+import { v4 as uuidv4 } from 'uuid';
 const {Telegraf, Markup} = pkg;
 dotenv.config();
 
 let orders = [];
-for(let i=0; i < getRndInteger(1,5); i++ ) {
-    orders.push({
-        date: new Date().toDateString().toLocaleString('en-US', { timeZone: 'Asia/Jakarta' }),
-        code: (Math.random() + 1).toString(36).substring(7),
-        amount: getRndInteger(50, 300),
-    });
-}
-new CronJob(
-    '0 0 * * *',
-    function () {
-        let orders = [];
-        for(let i=0; i < getRndInteger(1,5); i++ ) {
-            orders.push({
-                date: new Date().toLocaleString('en-US', { timeZone: 'Asia/Jakarta' }),
-                code: new Date().toLocaleString().toString().toBase64().slice(0, 5),
-                amount: getRndInteger(50, 300),
-            });
-        }
-    },
-    null,
-    true,
-    'America/Los_Angeles'
-);
 
-new CronJob(
-    '0 * * * *',
-    function () {
+const addOrder = () => {
+    for (let i = 0; i < getRndInteger(1, 3); i++) {
         orders.push({
             date: new Date().toLocaleString('en-US', { timeZone: 'Asia/Jakarta' }),
-            code: new Date().toLocaleString().toString().toBase64().slice(0, 5),
+            code: uuidv4().slice(0, 8).toUpperCase(),
             amount: getRndInteger(50, 300),
         });
+    }
+
+}
+
+for(let i=0; i < getRndInteger(1,5); i++ ) {
+    addOrder();
+}
+new CronJob(
+    '0 0 0 * * *',
+    function () {
+        let orders = [];
+        addOrder();
     },
     null,
     true,
-    'America/Los_Angeles'
+    'UTC+9:00'
 );
 
+new CronJob(
+    '0 0 * * * *',
+    function () {
+        addOrder();
+    },
+    null,
+    true,
+    'UTC+9:00'
+);
 
 const mainMenu = (lang) =>[[ texts.lng_settings[lang], texts.admin_info[lang], texts.order_status[lang],]]
 
