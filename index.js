@@ -7,13 +7,25 @@ import { texts } from './texts.js'
 const {Telegraf, Markup} = pkg;
 dotenv.config();
 
-let amountOfOrders = getRndInteger(20, 30);
-let amountOfMoney = getRndInteger(127, 320);
-
+let orders = [];
+for(let i=0; i < getRndInteger(1,5); i++ ) {
+    orders.push({
+        date: new Date().toDateString().toLocaleString('en-US', { timeZone: 'Asia/Jakarta' }),
+        code: (Math.random() + 1).toString(36).substring(7),
+        amount: getRndInteger(50, 300),
+    });
+}
 new CronJob(
     '0 0 * * *',
     function () {
-        amountOfOrders = getRndInteger(20, 30);
+        let orders = [];
+        for(let i=0; i < getRndInteger(1,5); i++ ) {
+            orders.push({
+                date: new Date().toLocaleString('en-US', { timeZone: 'Asia/Jakarta' }),
+                code: new Date().toLocaleString().toString().toBase64().slice(0, 5),
+                amount: getRndInteger(50, 300),
+            });
+        }
     },
     null,
     true,
@@ -23,8 +35,11 @@ new CronJob(
 new CronJob(
     '0 * * * *',
     function () {
-        amountOfOrders += getRndInteger(1, 2);
-        amountOfMoney += getRndInteger(10, 50);
+        orders.push({
+            date: new Date().toLocaleString('en-US', { timeZone: 'Asia/Jakarta' }),
+            code: new Date().toLocaleString().toString().toBase64().slice(0, 5),
+            amount: getRndInteger(50, 300),
+        });
     },
     null,
     true,
@@ -42,7 +57,11 @@ const langKeyBoard = {
     }
 };
 
-const getOrders = (lang, orders, money) => `<b>${orders}</b> ${texts.orders_today[lang]} ${money} $`
+const getOrders = (lang) => orders.map((order) => {
+    return `${order.date} ${order.code} ${order.amount} $ \n`
+}).join('');
+
+
 
 const getAdminInfo = (lang) => {
     return texts.admin_info_in[lang];
@@ -61,8 +80,8 @@ bot.start((ctx) => {
 bot.hears(texts.lng_settings['en'], (ctx) => ctx.reply(`Choose Language`, langKeyBoard));
 bot.hears(texts.lng_settings['ko'], (ctx) => ctx.reply(`Choose Language`, langKeyBoard));
 
-bot.hears(texts.order_status['en'], (ctx) => ctx.replyWithHTML(getOrders('en', amountOfOrders, amountOfMoney)));
-bot.hears(texts.order_status['ko'], (ctx) => ctx.replyWithHTML(getOrders('en', amountOfOrders, amountOfMoney)));
+bot.hears(texts.order_status['en'], (ctx) => ctx.replyWithHTML(getOrders('en')));
+bot.hears(texts.order_status['ko'], (ctx) => ctx.replyWithHTML(getOrders('en')));
 bot.hears(texts.admin_info['en'], (ctx) => {
     return ctx.reply(`${texts.admin_info_in['en']}`)
 });
