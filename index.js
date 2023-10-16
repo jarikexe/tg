@@ -25,15 +25,13 @@ const addOrder = () => {
 
 }
 
-for(let i=0; i < getRndInteger(1,5); i++ ) {
-    for (i = 0; i< 7; i++) {
-        addOrder();
-    }
+for(let i= 0; i <= 8; i++ ) {
+    addOrder();
 }
 new CronJob(
     '0 0 0 * * *',
     function () {
-        let orders = [];
+        orders = [];
         addOrder();
     },
     null,
@@ -63,7 +61,7 @@ const langKeyBoard = {
 
 const getOrders = (lang) => orders.map((order) => {
     return `${order.date} ${order.code} ${order.amount} $ \n`
-}).join('');
+});
 
 
 
@@ -84,7 +82,14 @@ bot.start((ctx) => {
 bot.hears(texts.lng_settings['en'], (ctx) => ctx.reply(`Choose Language`, langKeyBoard));
 bot.hears(texts.lng_settings['ko'], (ctx) => ctx.reply(`Choose Language`, langKeyBoard));
 
-bot.hears(texts.order_status['en'], (ctx) => ctx.replyWithHTML(getOrders('en')));
+bot.hears(texts.order_status['en'], async (ctx) => {
+    const orders = getOrders('ko');
+    for(let i = 0; i < orders.length; i = i + 50) {
+        const chunk = orders.slice(i, i + 50);
+        await ctx.replyWithHTML(chunk.join(''));
+    }
+    return;
+});
 bot.hears(texts.order_status['ko'], (ctx) => ctx.replyWithHTML(getOrders('en')));
 bot.hears(texts.admin_info['en'], (ctx) => {
     return ctx.reply(`${texts.admin_info_in['en']}`)
