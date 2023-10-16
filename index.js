@@ -5,15 +5,19 @@ import { CronJob } from 'cron';
 import { getRndInteger } from './utils.js';
 import { texts } from './texts.js';
 import { v4 as uuidv4 } from 'uuid';
+import moment from 'moment-timezone';
+moment.tz.setDefault("Asia/Seoul");
 const {Telegraf, Markup} = pkg;
 dotenv.config();
+moment.tz.setDefault("Asia/Seoul");
 
+console.log();
 let orders = [];
 
 const addOrder = () => {
     for (let i = 0; i < getRndInteger(1, 3); i++) {
         orders.push({
-            date: new Date().toDateString().toLocaleString('en-US', { timeZone: 'UTC+9:00' }),
+            date: moment().format('YYYY/MM/DD'),
             code: uuidv4().slice(0, 8).toUpperCase(),
             amount: getRndInteger(50, 300),
         });
@@ -25,7 +29,6 @@ for(let i=0; i < getRndInteger(1,5); i++ ) {
     for (i = 0; i< 7; i++) {
         addOrder();
     }
-
 }
 new CronJob(
     '0 0 0 * * *',
